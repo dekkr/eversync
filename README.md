@@ -10,8 +10,8 @@ Features:
 * [ ] Wildcard file filter
 * [ ] Auto tagging
 * [ ] Matching file names to Notebooks
-* [ ][Optional] .deb distribution
-* [ ][Optional] docker distribution
-* [ ][Optional] Daemon mode
+* [ ] [Optional] .deb distribution
+* [ ] [Optional] docker distribution
+* [ ] [Optional] Daemon mode
 
 EverSync is written in Scala.
