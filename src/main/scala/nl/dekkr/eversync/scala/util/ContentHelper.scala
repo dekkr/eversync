@@ -1,5 +1,7 @@
 package nl.dekkr.eversync.scala.util
 
+import java.io.File
+
 object ContentHelper {
 
 
@@ -8,5 +10,15 @@ object ContentHelper {
     "<en-note>" +
     content +
     "</en-note>"
+
+  def fileNameToTitle(file: File) : String = {
+    val fileName = file.getName.replace("_"," ")
+    try {
+      fileName.substring(0, fileName.lastIndexOf("."))
+    } catch {
+      case e : Exception => fileName
+    }
+  }
+
 
 }

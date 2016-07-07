@@ -2,33 +2,36 @@ package nl.dekkr.eversync.scala
 
 import com.evernote.edam.error.{EDAMErrorCode, EDAMSystemException, EDAMUserException}
 import com.evernote.thrift.transport.TTransportException
-import nl.dekkr.eversync.scala.depricated.EvernoteDemo
+import nl.dekkr.eversync.scala.model.{FileDetails, NoteDetails}
+import nl.dekkr.eversync.scala.service.Evernote
+import nl.dekkr.eversync.scala.util.{Config, ContentHelper, FileHelper, Mimetype}
+
+import scala.util.{Failure, Success}
+
 
 object EverSync extends App {
-  /** *************************************************************************
-    * You must change the following values before running this sample code *
-    * **************************************************************************/
-  private val AUTH_TOKEN: String = "your developer token"
 
-  /**
-    * Console entry point.
-    */
-  @throws(classOf[Exception])
-  //  def main(args: String) {
-  var token: String = System.getenv("AUTH_TOKEN")
-  if (token == null) {
-    token = AUTH_TOKEN
-  }
-  if (token == AUTH_TOKEN) {
+  var token: String = Config.auth_token
+  if (token == "dummy") {
     System.err.println("Please fill in your developer token")
     System.err.println("To get a developer token, go to https://sandbox.evernote.com/api/DeveloperToken.action")
   }
-  val demo: EvernoteDemo = new EvernoteDemo(token)
+  val evernote: Evernote = new Evernote(token)
   try {
-    demo.listNotes()
-    demo.createNote()
-    demo.searchNotes()
-    demo.updateNoteTag()
+    println(s"Reading files from ${Config.importDirectory}")
+    val files = FileHelper.getFileInFolder(Config.importDirectory)
+    files.foreach { file =>
+      Mimetype.mimeType(file) match {
+        case Success(mimeType) =>
+          println("-------------------------------")
+          println(s"Name: ${file.getName} - mime-type $mimeType")
+          val noteDetails = NoteDetails(FileDetails(file, mimeType), ContentHelper.fileNameToTitle(file), None)
+          evernote.createNote(noteDetails)
+
+        case Failure(error) => println(s"Could not determine mime-type of file ${file.getName}")
+      }
+
+    }
   }
   catch {
     case e: EDAMUserException => {
@@ -39,7 +42,7 @@ object EverSync extends App {
         System.err.println("Your authentication token is invalid!")
       }
       else if (e.getErrorCode eq EDAMErrorCode.QUOTA_REACHED) {
-        System.err.println("Your authentication token is invalid!")
+        System.err.println("Your quota has been reached!")
       }
       else {
         System.err.println("Error: " + e.getErrorCode.toString + " parameter: " + e.getParameter)

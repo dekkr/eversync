@@ -1,11 +1,11 @@
 package nl.dekkr.eversync.scala.util
 
-import java.io.{ByteArrayOutputStream, File, FileInputStream}
+import java.io._
 import java.nio.file.{Files, Paths}
 import java.security.MessageDigest
 
 import com.evernote.edam.`type`.Data
-import nl.dekkr.eversync.scala.depricated.EvernoteDemo
+import nl.dekkr.eversync.scala.service.EvernoteDemo
 
 object FileHelper {
 
@@ -16,12 +16,11 @@ object FileHelper {
   @throws(classOf[Exception])
   def readFileAsData(fileName: String): Option[Data] = {
     if (Files.exists(Paths.get(fileName))) {
-      val filePath: String = new File(classOf[EvernoteDemo].getResource(classOf[EvernoteDemo].getCanonicalName + ".class").getPath).getParent + File.separator + fileName
-      val in: FileInputStream = new FileInputStream(filePath)
+      val in: FileInputStream = new FileInputStream(fileName)
       val byteOut: ByteArrayOutputStream = new ByteArrayOutputStream
       val block: Array[Byte] = new Array[Byte](10240)
       var len: Int = 0
-      while ({
+      while ( {
         len = in.read(block)
         len
       } >= 0) {
@@ -53,5 +52,25 @@ object FileHelper {
     }
     sb.toString
   }
+
+
+  class ExtensionFilter(extension: String) extends FilenameFilter {
+    override def accept(dir: File, name: String): Boolean = name.toLowerCase.endsWith(s".$extension")
+  }
+
+  def getFileInFolder(folderName: String, fileNameExtension: Option[String] = None): List[File] = {
+    val folder = new File(folderName)
+    if (folder.exists && folder.isDirectory) {
+      fileNameExtension match {
+        case Some(ext) =>
+          folder.listFiles(new ExtensionFilter(ext)).toList
+        case None =>
+          folder.listFiles.toList
+      }
+    } else {
+      List.empty[File]
+    }
+  }
+
 
 }
