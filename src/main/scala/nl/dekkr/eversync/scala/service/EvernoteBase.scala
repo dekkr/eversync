@@ -5,14 +5,14 @@ import java.io.File
 import com.evernote.auth.{EvernoteAuth, EvernoteService}
 import com.evernote.clients.{ClientFactory, NoteStoreClient, UserStoreClient}
 import com.evernote.edam.`type`.{Note, Resource, ResourceAttributes}
-import nl.dekkr.eversync.scala.util.{ContentHelper, FileHelper}
+import nl.dekkr.eversync.scala.util.{Config, ContentHelper, FileHelper}
 import org.slf4j.LoggerFactory
 
 
 class EvernoteBase {
 
-  protected var userStore: UserStoreClient = null
-  protected var noteStore: NoteStoreClient = null
+  protected var userStore: UserStoreClient = _
+  protected var noteStore: NoteStoreClient = _
   protected var newNoteGuid: Option[String] = None
 
   val log = LoggerFactory.getLogger(classOf[Evernote])
@@ -25,7 +25,8 @@ class EvernoteBase {
   @throws(classOf[Exception])
   def login(token: String) {
     //this()
-    val evernoteAuth: EvernoteAuth = new EvernoteAuth(EvernoteService.SANDBOX, token)
+    val mode = if(Config.sandbox) EvernoteService.SANDBOX else EvernoteService.PRODUCTION
+    val evernoteAuth: EvernoteAuth = new EvernoteAuth(mode, token)
     val factory: ClientFactory = new ClientFactory(evernoteAuth)
     userStore = factory.createUserStoreClient
     val versionOk: Boolean = userStore.checkVersion("EverSync (Scala)", com.evernote.edam.userstore.Constants.EDAM_VERSION_MAJOR, com.evernote.edam.userstore.Constants.EDAM_VERSION_MINOR)

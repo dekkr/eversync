@@ -82,7 +82,7 @@ object FileHelper {
 
 
   def moveFile(file:File, directory: String): Unit = {
-    val fullNewPath = s"${Paths.get(directory)}${File.pathSeparator}${file.getName}"
+    val fullNewPath = s"${Paths.get(directory)}${File.separatorChar}${file.getName}"
     file.renameTo(Paths.get(fullNewPath).toFile)
   }
 

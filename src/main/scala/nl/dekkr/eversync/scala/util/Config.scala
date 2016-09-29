@@ -14,6 +14,8 @@ object Config {
 
     lazy val archiveAfterUpload = root.getBoolean("archive_after_upload")
     lazy val archiveDirectory = root.getString("archive_directory")
+
+    lazy val sandbox = root.getBoolean("sandbox")
 }
 
 
