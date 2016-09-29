@@ -5,7 +5,7 @@ Synching files to Evernote
 Features:
 * [x] One file = One Note
 * [x] Binary files (pdf & images)
-* [ ] Move files after upload
+* [x] Move files after upload
 * [ ] Command Line Interface
 * [ ] Wildcard file filter
 * [ ] Auto tagging

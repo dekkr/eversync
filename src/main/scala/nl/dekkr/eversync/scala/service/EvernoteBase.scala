@@ -6,6 +6,7 @@ import com.evernote.auth.{EvernoteAuth, EvernoteService}
 import com.evernote.clients.{ClientFactory, NoteStoreClient, UserStoreClient}
 import com.evernote.edam.`type`.{Note, Resource, ResourceAttributes}
 import nl.dekkr.eversync.scala.util.{ContentHelper, FileHelper}
+import org.slf4j.LoggerFactory
 
 
 class EvernoteBase {
@@ -13,6 +14,8 @@ class EvernoteBase {
   protected var userStore: UserStoreClient = null
   protected var noteStore: NoteStoreClient = null
   protected var newNoteGuid: Option[String] = None
+
+  val log = LoggerFactory.getLogger(classOf[Evernote])
 
   /**
     * Intialize UserStore and NoteStore clients. During this step, we
@@ -27,7 +30,7 @@ class EvernoteBase {
     userStore = factory.createUserStoreClient
     val versionOk: Boolean = userStore.checkVersion("EverSync (Scala)", com.evernote.edam.userstore.Constants.EDAM_VERSION_MAJOR, com.evernote.edam.userstore.Constants.EDAM_VERSION_MINOR)
     if (!versionOk) {
-      System.err.println("Incompatible Evernote client protocol version")
+      log.error("Incompatible Evernote client protocol version")
       System.exit(1)
     }
     noteStore = factory.createNoteStoreClient
@@ -54,9 +57,7 @@ class EvernoteBase {
         note.addToTagNames("EverSync")
         tags.foreach(note.addToTagNames)
         noteStore.createNote(note)
-
     }
   }
-
 
 }

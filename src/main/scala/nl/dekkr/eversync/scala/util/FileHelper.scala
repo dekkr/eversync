@@ -5,7 +5,6 @@ import java.nio.file.{Files, Paths}
 import java.security.MessageDigest
 
 import com.evernote.edam.`type`.Data
-import nl.dekkr.eversync.scala.service.EvernoteDemo
 
 object FileHelper {
 
@@ -58,7 +57,7 @@ object FileHelper {
     override def accept(dir: File, name: String): Boolean = name.toLowerCase.endsWith(s".$extension")
   }
 
-  def getFileInFolder(folderName: String, fileNameExtension: Option[String] = None): List[File] = {
+  def getFilesInFolder(folderName: String, fileNameExtension: Option[String] = None): List[File] = {
     val folder = new File(folderName)
     if (folder.exists && folder.isDirectory) {
       fileNameExtension match {
@@ -72,5 +71,19 @@ object FileHelper {
     }
   }
 
+
+  def makeDir(path: String): Boolean = {
+    val directory = Paths.get(path)
+    if (!directory.toFile.exists()) {
+      directory.toFile.mkdir()
+    }
+    directory.toFile.isDirectory
+  }
+
+
+  def moveFile(file:File, directory: String): Unit = {
+    val fullNewPath = s"${Paths.get(directory)}${File.pathSeparator}${file.getName}"
+    file.renameTo(Paths.get(fullNewPath).toFile)
+  }
 
 }

@@ -8,7 +8,7 @@ import com.evernote.edam.notestore.{NoteFilter, NoteList}
 import scala.collection.JavaConversions._
 
 
-@deprecated("For reference included, to be replaced by own implementation")
+@deprecated("For reference included, to be replaced by own implementation","No guarantee it works")
 class EvernoteDemo extends  EvernoteBase {
 
   def this(token: String) {
